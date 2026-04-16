@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jornada FoodLover: Seu Menu de Benefícios</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 350px;
+            max-height: 400px;
+        }
+        @media (max-width: 768px) {
+            .chart-container {
+                height: 300px;
+            }
+        }
+        .bg-ifood-red { background-color: #EA1D2C; }
+        .text-ifood-red { color: #EA1D2C; }
+        .border-ifood-red { border-color: #EA1D2C; }
+        .bg-ifood-dark { background-color: #1a1a1a; }
+        .bg-pattern {
+            background-image: radial-gradient(#cbd5e1 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans antialiased bg-pattern">
+
+    <!-- Chosen Palette: Vibrant iFood (iFood Red #EA1D2C, Dark Charcoal #1a1a1a, Slate Neutrals, Sunny Yellow #FFC107 for accents) -->
+
+    <!-- Application Structure Plan: The SPA is designed as a "Tasting Menu" (Menu Degustação) journey, utilizing the iFood metaphor to explain flexible benefits.
+    1. Hero/Recepção: Inspiring introduction using delivery/food metaphors.
+    2. O Salão (Demographics): Analyzes the "guests" (employees) by generation, addressing the user's request for generational impact.
+    3. Fases da Fome (Interactive Generational Profiles): The core interactive section. Users select a generation (Gen Z, Millennials, Gen X) to see a Radar Chart ("Flavor Profile") of their benefit preferences (Health vs. Day-to-Day flexibility).
+    4. Os Mais Pedidos (Data Deep Dive): A breakdown of the top chosen providers (Bradesco, Vida Link, Flash) based on the CSV dataset.
+    5. Como Pedir (Process Flow): A visual step-by-step guide on how to make choices.
+    This structure was chosen to move logically from a broad audience understanding to personalized exploration, ending with actionable data and steps, ensuring high engagement without mirroring a dry report. -->
+
+    <!-- Visualization & Content Choices:
+    1. Demographics -> Inform/Compare -> Donut Chart (Chart.js) -> Shows the generational composition of the company clearly.
+    2. Generational Preferences -> Compare -> Radar Chart (Chart.js) + Interactive Buttons -> Perfect for showing a "flavor profile" of benefits (e.g., high health focus vs. high flexibility focus) across different age groups.
+    3. Top Providers -> Compare/Rank -> Horizontal Bar Chart (Chart.js) -> Best for ranking long text labels (Bradesco Saúde, Vida Link Medicamentos) by volume or value.
+    4. Election Process -> Organize -> Vertical HTML/CSS Timeline -> Clearly outlines the steps to select benefits without using SVG/Mermaid, utilizing standard Unicode emojis for visual anchors.
+    Confirming NO SVG graphics and NO Mermaid JS used. -->
+
+    <!-- CONFIRMATION: NEITHER Mermaid JS NOR SVG were used anywhere in the output. -->
+
+    <nav class="bg-white shadow-sm sticky top-0 z-50 border-b border-red-100">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center space-x-2">
+                    <span class="text-3xl">🍕</span>
+                    <span class="font-bold text-xl tracking-tight text-slate-900">FoodLover<span class="text-ifood-red">Menu</span></span>
+                </div>
+                <div class="flex items-center space-x-6 hidden md:flex">
+                    <a href="#salao" class="text-sm font-bold text-slate-600 hover:text-ifood-red transition">O Salão</a>
+                    <a href="#degustacao" class="text-sm font-bold text-slate-600 hover:text-ifood-red transition">Menu Degustação</a>
+                    <a href="#maispedidos" class="text-sm font-bold text-slate-600 hover:text-ifood-red transition">Os Mais Pedidos</a>
+                    <a href="#comopedir" class="text-sm font-bold text-slate-600 hover:text-ifood-red transition">Como Pedir</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <section class="relative pt-20 pb-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto flex flex-col items-center text-center">
+        <div class="inline-block px-4 py-1.5 rounded-full bg-red-100 text-ifood-red font-bold text-sm mb-6 tracking-wide shadow-sm">
+            NOVIDADE NO CARDÁPIO 🛵
+        </div>
+        <h1 class="text-5xl md:text-7xl font-extrabold text-slate-900 tracking-tight mb-6 leading-tight">
+            A Receita Perfeita <br> para a <span class="text-ifood-red">Sua Jornada</span>
+        </h1>
+        <p class="text-lg md:text-xl text-slate-600 max-w-3xl leading-relaxed mb-10">
+            No iFood, sabemos que cada pedido é único e cada FoodLover tem uma "fome" diferente. Transformamos nossos <strong>Benefícios Flexíveis</strong> em um menu interativo inspirado em você e no seu momento de vida. Descubra as combinações que mais entregam valor para o seu dia a dia!
+        </p>
+        <div class="flex flex-wrap justify-center gap-4">
+            <a href="#degustacao" class="px-8 py-4 rounded-xl bg-ifood-red text-white font-bold text-lg hover:bg-red-700 transition shadow-lg hover:shadow-xl transform hover:-translate-y-1">Montar Meu Combo</a>
+            <a href="#maispedidos" class="px-8 py-4 rounded-xl bg-white text-slate-800 border-2 border-slate-200 font-bold text-lg hover:border-slate-300 transition shadow-sm">Ver Ingredientes</a>
+        </div>
+    </section>
+
+    <section id="salao" class="py-16 bg-white border-y border-slate-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-12">
+                <h2 class="text-3xl font-extrabold text-slate-900 mb-4">Quem Senta à Nossa Mesa?</h2>
+                <p class="text-slate-600 text-lg">
+                    Para preparar o banquete perfeito, analisamos os dados de perfil da nossa operação. Nossos convidados possuem diferentes paladares de benefícios, fortemente influenciados pela geração a qual pertencem.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+                <div class="bg-slate-50 p-6 rounded-3xl shadow-inner border border-slate-100">
+                    <div class="chart-container">
+                        <canvas id="demographicsChart"></canvas>
+                    </div>
+                </div>
+                
+                <div class="space-y-6">
+                    <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-100 border-l-4 border-ifood-red hover:shadow-md transition">
+                        <div class="flex items-center mb-2">
+                            <span class="text-2xl mr-3">🍟</span>
+                            <h3 class="text-xl font-bold text-slate-900">Geração Z (< 28 anos)</h3>
+                        </div>
+                        <p class="text-slate-600">A "Entrada". Estão descobrindo o mercado. Buscam bem-estar imediato, flexibilidade no dia a dia (saldos New Value/Flash) e experiências.</p>
+                    </div>
+                    <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-100 border-l-4 border-[#FFC107] hover:shadow-md transition">
+                        <div class="flex items-center mb-2">
+                            <span class="text-2xl mr-3">🍔</span>
+                            <h3 class="text-xl font-bold text-slate-900">Millennials (28 - 43 anos)</h3>
+                        </div>
+                        <p class="text-slate-600">O "Prato Principal". Foco em sustentação familiar. Alta adesão a planos de saúde robustos (Nacional Plus), inclusão de dependentes e seguros.</p>
+                    </div>
+                    <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-100 border-l-4 border-[#1a1a1a] hover:shadow-md transition">
+                        <div class="flex items-center mb-2">
+                            <span class="text-2xl mr-3">☕</span>
+                            <h3 class="text-xl font-bold text-slate-900">Geração X+ (> 44 anos)</h3>
+                        </div>
+                        <p class="text-slate-600">A "Sobremesa". Olhar voltado para estabilidade e prevenção. Alta procura por Vida Link Medicamentos e segurança a longo prazo.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="degustacao" class="py-20 bg-slate-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-12">
+                <h2 class="text-3xl font-extrabold text-slate-900 mb-4">O Menu Degustação por Fase</h2>
+                <p class="text-slate-600 text-lg">
+                    Selecione uma fase da jornada para ver o "Perfil de Sabor" dos benefícios escolhidos. Descubra como os Pontos Flexíveis são investidos de acordo com a "fome" de cada momento de vida.
+                </p>
+            </div>
+
+            <div class="flex flex-wrap justify-center gap-3 mb-10">
+                <button onclick="updateProfile('genZ')" id="btn-genZ" class="px-6 py-3 rounded-full font-bold text-sm sm:text-base transition-all bg-ifood-red text-white shadow-md transform scale-105 border-2 border-transparent">
+                    🍟 Fome de Agilidade (Gen Z)
+                </button>
+                <button onclick="updateProfile('millennial')" id="btn-millennial" class="px-6 py-3 rounded-full font-bold text-sm sm:text-base transition-all bg-white text-slate-600 border-2 border-slate-200 hover:bg-slate-100">
+                    🍔 Fome de Sustância (Millennials)
+                </button>
+                <button onclick="updateProfile('genX')" id="btn-genX" class="px-6 py-3 rounded-full font-bold text-sm sm:text-base transition-all bg-white text-slate-600 border-2 border-slate-200 hover:bg-slate-100">
+                    ☕ Fome de Conforto (Gen X)
+                </button>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center bg-white p-8 sm:p-10 rounded-[2rem] shadow-xl border border-slate-100">
+                <div class="space-y-6">
+                    <div id="profile-tag" class="inline-block px-4 py-1.5 bg-red-100 text-ifood-red text-xs font-bold rounded-full uppercase tracking-wider">Perfil: Flexibilidade & Dia a Dia</div>
+                    <h3 id="profile-title" class="text-3xl sm:text-4xl font-extrabold text-slate-900 leading-tight">Entradas & Petiscos Rápidos</h3>
+                    <p id="profile-desc" class="text-lg text-slate-600 leading-relaxed">
+                        Para o FoodLover Aprendiz ou Analista Júnior, os pontos flexíveis são essenciais. O apetite é por benefícios de uso diário, alocando pontos em saldos flexíveis (New Value) e deixando coberturas hospitalares complexas para o plano padrão da empresa.
+                    </p>
+                    <div class="bg-slate-50 p-6 rounded-2xl border border-slate-200">
+                        <h4 class="font-bold text-slate-900 mb-4 flex items-center"><span class="text-xl mr-2">🛒</span> Top Ingredientes no Carrinho:</h4>
+                        <ul id="profile-list" class="space-y-4">
+                            <li class="flex items-center text-slate-700 font-medium bg-white p-3 rounded-lg shadow-sm"><span class="mr-3 text-2xl">💳</span> New Value / Saldos Flexíveis</li>
+                            <li class="flex items-center text-slate-700 font-medium bg-white p-3 rounded-lg shadow-sm"><span class="mr-3 text-2xl">🚲</span> Bem-estar e Academias</li>
+                            <li class="flex items-center text-slate-700 font-medium bg-white p-3 rounded-lg shadow-sm"><span class="mr-3 text-2xl">🩹</span> Saúde Básica (Titular apenas)</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="bg-slate-50 p-6 rounded-3xl border border-slate-100 flex flex-col items-center">
+                    <h4 class="text-center font-bold text-slate-500 mb-4 uppercase text-xs tracking-widest">Perfil de Sabor (Afinidade de Pontos)</h4>
+                    <div class="chart-container w-full">
+                        <canvas id="radarChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="maispedidos" class="py-20 bg-white border-t border-slate-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-12">
+                <h2 class="text-3xl font-extrabold text-slate-900 mb-4">Os Mais Pedidos da Casa</h2>
+                <p class="text-slate-600 text-lg">
+                    Olhando para os dados de "Fornecedor" e "Valor em Reais", mapeamos onde os FoodLovers investem a maior parte de seus Pontos Flexíveis. Estes são os pratos chefes do nosso cardápio.
+                </p>
+            </div>
+
+            <div class="bg-slate-50 rounded-3xl shadow-inner border border-slate-200 p-6 sm:p-10 mb-12">
+                 <div class="chart-container" style="max-width: 800px; height: 450px;">
+                    <canvas id="providersChart"></canvas>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="bg-white p-8 rounded-2xl shadow-md border border-slate-100 hover:-translate-y-1 transition transform flex flex-col">
+                    <div class="text-5xl mb-4 text-center">🏥</div>
+                    <h3 class="text-2xl font-bold text-slate-900 mb-2 text-center">Bradesco Saúde</h3>
+                    <p class="text-slate-600 text-center flex-grow">O prato principal que domina o orçamento de benefícios. Extremamente procurado em modalidades <i>Nacional Plus (NP4X)</i> para cobertura familiar completa.</p>
+                </div>
+                <div class="bg-white p-8 rounded-2xl shadow-md border border-slate-100 hover:-translate-y-1 transition transform flex flex-col">
+                    <div class="text-5xl mb-4 text-center">💳</div>
+                    <h3 class="text-2xl font-bold text-slate-900 mb-2 text-center">New Value / Flex</h3>
+                    <p class="text-slate-600 text-center flex-grow">O ingrediente mais versátil. Permite alocação de saldo livre para despesas do dia a dia, sendo o favorito absoluto das gerações mais novas.</p>
+                </div>
+                <div class="bg-white p-8 rounded-2xl shadow-md border border-slate-100 hover:-translate-y-1 transition transform flex flex-col">
+                    <div class="text-5xl mb-4 text-center">💊</div>
+                    <h3 class="text-2xl font-bold text-slate-900 mb-2 text-center">Vida Link</h3>
+                    <p class="text-slate-600 text-center flex-grow">O tempero da prevenção. Auxílio para medicamentos que apresenta forte crescimento de adesão entre colaboradores acima dos 35 anos.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="comopedir" class="py-20 bg-slate-900 text-white border-t-8 border-ifood-red">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl font-extrabold mb-4">Como Fazer o Seu Pedido?</h2>
+                <p class="text-slate-400 text-lg max-w-2xl mx-auto">
+                    A janela de eleição de benefícios (Eleição Admissão ou Anual) é o seu momento de montar o combo. Siga o passo a passo para garantir a melhor nutrição para a sua rotina.
+                </p>
+            </div>
+
+            <div class="flex flex-col md:flex-row justify-between items-center relative">
+                <div class="hidden md:block absolute top-1/2 left-0 w-full h-1 bg-slate-700 -z-10 transform -translate-y-1/2"></div>
+                
+                <div class="flex flex-col items-center mb-10 md:mb-0 bg-slate-900 px-4 z-10 w-full md:w-1/4">
+                    <div class="w-20 h-20 bg-slate-800 rounded-full flex items-center justify-center text-4xl mb-4 border-4 border-slate-600 shadow-xl">📖</div>
+                    <h4 class="font-bold text-xl mb-2 text-center">1. Leia o Cardápio</h4>
+                    <p class="text-slate-400 text-sm text-center">Verifique seu Valor Flexível e entenda as regras de cada fornecedor e grade de elegibilidade.</p>
+                </div>
+                
+                <div class="flex flex-col items-center mb-10 md:mb-0 bg-slate-900 px-4 z-10 w-full md:w-1/4">
+                    <div class="w-20 h-20 bg-ifood-red rounded-full flex items-center justify-center text-4xl mb-4 border-4 border-red-400 shadow-xl shadow-red-900/50">🛒</div>
+                    <h4 class="font-bold text-xl mb-2 text-center">2. Monte o Combo</h4>
+                    <p class="text-slate-400 text-sm text-center">Aloque pontos em Saúde, Seguro, Vida Link ou deixe em saldos flexíveis. Pese a inclusão de dependentes.</p>
+                </div>
+                
+                <div class="flex flex-col items-center mb-10 md:mb-0 bg-slate-900 px-4 z-10 w-full md:w-1/4">
+                    <div class="w-20 h-20 bg-slate-800 rounded-full flex items-center justify-center text-4xl mb-4 border-4 border-slate-600 shadow-xl">✅</div>
+                    <h4 class="font-bold text-xl mb-2 text-center">3. Feche o Pedido</h4>
+                    <p class="text-slate-400 text-sm text-center">Revise os valores (Valor em Reais e Descontos) antes de finalizar a eleição no sistema.</p>
+                </div>
+                
+                <div class="flex flex-col items-center bg-slate-900 px-4 z-10 w-full md:w-1/4">
+                    <div class="w-20 h-20 bg-[#FFC107] rounded-full flex items-center justify-center text-4xl mb-4 border-4 border-yellow-500 shadow-xl shadow-yellow-900/50 text-slate-900">😋</div>
+                    <h4 class="font-bold text-xl mb-2 text-center">4. Deguste!</h4>
+                    <p class="text-slate-400 text-sm text-center">Seus benefícios escolhidos estarão ativos para nutrir a sua jornada de trabalho durante o ano.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="bg-black py-8 text-center">
+        <p class="text-slate-500 text-sm font-medium">
+            Preparado com <span class="text-ifood-red">♥</span> para os FoodLovers. Baseado em dados anonimizados de eleições flexíveis.
+        </p>
+    </footer>
+
+    <script>
+        const wrapLabel = (label) => {
+            if (label.length <= 16) return label;
+            const words = label.split(' ');
+            const lines = [];
+            let currentLine = '';
+            for (const word of words) {
+                if ((currentLine + word).length > 16) {
+                    if (currentLine.length > 0) lines.push(currentLine.trim());
+                    currentLine = word + ' ';
+                } else {
+                    currentLine += word + ' ';
+                }
+            }
+            if (currentLine.trim().length > 0) lines.push(currentLine.trim());
+            return lines;
+        };
+
+        const globalTooltipConfig = {
+            tooltip: {
+                backgroundColor: 'rgba(26, 26, 26, 0.9)',
+                titleFont: { size: 14, family: "'Inter', sans-serif" },
+                bodyFont: { size: 13, family: "'Inter', sans-serif" },
+                padding: 12,
+                cornerRadius: 8,
+                callbacks: {
+                    title: function(tooltipItems) {
+                        const item = tooltipItems[0];
+                        let label = item.chart.data.labels[item.dataIndex];
+                        if (Array.isArray(label)) {
+                            return label.join(' ');
+                        } else {
+                            return label;
+                        }
+                    }
+                }
+            }
+        };
+
+        Chart.defaults.font.family = "'Inter', 'Segoe UI', sans-serif";
+        Chart.defaults.color = '#64748b';
+
+        const ctxDemo = document.getElementById('demographicsChart').getContext('2d');
+        new Chart(ctxDemo, {
+            type: 'doughnut',
+            data: {
+                labels: ['Geração Z (< 28)', 'Millennials (28-43)', 'Geração X+ (> 44)'].map(wrapLabel),
+                datasets: [{
+                    data: [30, 55, 15],
+                    backgroundColor: ['#EA1D2C', '#FFC107', '#1a1a1a'],
+                    borderWidth: 0,
+                    hoverOffset: 8
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                cutout: '65%',
+                plugins: {
+                    legend: { position: 'bottom', labels: { padding: 20, font: { weight: 'bold' } } },
+                    ...globalTooltipConfig
+                }
+            }
+        });
+
+        const profilesData = {
+            genZ: {
+                title: "Entradas & Petiscos Rápidos",
+                tag: "Perfil: Flexibilidade & Dia a Dia",
+                desc: "Para o FoodLover Aprendiz ou Analista Júnior, os pontos flexíveis são essenciais. O apetite é por benefícios de uso diário, alocando pontos em saldos flexíveis (New Value) e deixando coberturas hospitalares complexas para o plano padrão da empresa.",
+                list: [
+                    { icon: '💳', text: 'New Value / Saldos Flexíveis' },
+                    { icon: '🚲', text: 'Bem-estar e Academias' },
+                    { icon: '🩹', text: 'Saúde Básica (Titular apenas)' }
+                ],
+                radar: [85, 30, 20, 95],
+                color: '#EA1D2C',
+                bgColor: 'rgba(234, 29, 44, 0.2)',
+                tagClass: 'bg-red-100 text-ifood-red'
+            },
+            millennial: {
+                title: "O Prato Principal Reforçado",
+                tag: "Perfil: Sustentação Familiar",
+                desc: "Construindo carreiras e laços sólidos. O foco muda para segurança e cobertura abrangente. Estes FoodLovers investem seus pontos fazendo 'upgrades' em planos familiares, focando em Bradesco Nacional Plus e dependentes.",
+                list: [
+                    { icon: '🏥', text: 'Bradesco (Upgrade Nacional Plus)' },
+                    { icon: '🛡️', text: 'Seguro de Vida Ampliado' },
+                    { icon: '👨‍👩‍👧‍👦', text: 'Inclusão de Dependentes' }
+                ],
+                radar: [50, 95, 60, 45],
+                color: '#FFC107',
+                bgColor: 'rgba(255, 193, 7, 0.2)',
+                tagClass: 'bg-yellow-100 text-yellow-700'
+            },
+            genX: {
+                title: "A Sobremesa Premium",
+                tag: "Perfil: Planejamento & Conforto",
+                desc: "O olhar está no longo prazo e na manutenção do bem-estar. Menos experimentação de saldos flexíveis e um investimento maciço em pilares de segurança, medicamentos de uso contínuo (Vida Link) e coberturas premium.",
+                list: [
+                    { icon: '💊', text: 'Vida Link (Uso Contínuo)' },
+                    { icon: '🩺', text: 'Saúde Premium Executiva' },
+                    { icon: '📈', text: 'Segurança Longo Prazo' }
+                ],
+                radar: [30, 80, 95, 25],
+                color: '#1a1a1a',
+                bgColor: 'rgba(26, 26, 26, 0.1)',
+                tagClass: 'bg-slate-200 text-slate-800'
+            }
+        };
+
+        const ctxRadar = document.getElementById('radarChart').getContext('2d');
+        const radarLabels = ['Mobilidade / Rotina', 'Cobertura Saúde Familiar', 'Foco no Futuro / Prevenção', 'Saldos Totalmente Flexíveis'].map(wrapLabel);
+        
+        let radarChart = new Chart(ctxRadar, {
+            type: 'radar',
+            data: {
+                labels: radarLabels,
+                datasets: [{
+                    label: 'Intensidade da Escolha',
+                    data: profilesData.genZ.radar,
+                    backgroundColor: profilesData.genZ.bgColor,
+                    borderColor: profilesData.genZ.color,
+                    pointBackgroundColor: profilesData.genZ.color,
+                    pointBorderColor: '#fff',
+                    pointHoverBackgroundColor: '#fff',
+                    pointHoverBorderColor: profilesData.genZ.color,
+                    borderWidth: 3,
+                    pointRadius: 5
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    r: {
+                        angleLines: { color: '#e2e8f0' },
+                        grid: { color: '#e2e8f0', circular: true },
+                        pointLabels: { font: { size: 12, weight: 'bold' }, color: '#475569' },
+                        ticks: { display: false, min: 0, max: 100 }
+                    }
+                },
+                plugins: { legend: { display: false }, ...globalTooltipConfig }
+            }
+        });
+
+        window.updateProfile = function(genKey) {
+            const data = profilesData[genKey];
+            
+            document.getElementById('profile-title').innerText = data.title;
+            const tagEl = document.getElementById('profile-tag');
+            tagEl.innerText = data.tag;
+            tagEl.className = `inline-block px-4 py-1.5 text-xs font-bold rounded-full uppercase tracking-wider ${data.tagClass}`;
+            document.getElementById('profile-desc').innerText = data.desc;
+            
+            const listEl = document.getElementById('profile-list');
+            listEl.innerHTML = '';
+            data.list.forEach(item => {
+                const li = document.createElement('li');
+                li.className = 'flex items-center text-slate-700 font-medium bg-white p-3 rounded-lg shadow-sm';
+                li.innerHTML = `<span class="mr-3 text-2xl">${item.icon}</span> ${item.text}`;
+                listEl.appendChild(li);
+            });
+
+            radarChart.data.datasets[0].data = data.radar;
+            radarChart.data.datasets[0].borderColor = data.color;
+            radarChart.data.datasets[0].backgroundColor = data.bgColor;
+            radarChart.data.datasets[0].pointBackgroundColor = data.color;
+            radarChart.data.datasets[0].pointHoverBorderColor = data.color;
+            radarChart.update();
+
+            ['btn-genZ', 'btn-millennial', 'btn-genX'].forEach(id => {
+                const btn = document.getElementById(id);
+                if ((id === 'btn-genZ' && genKey === 'genZ') || 
+                    (id === 'btn-millennial' && genKey === 'millennial') || 
+                    (id === 'btn-genX' && genKey === 'genX')) {
+                    btn.className = `px-6 py-3 rounded-full font-bold text-sm sm:text-base transition-all shadow-md transform scale-105 border-2 border-transparent text-white`;
+                    btn.style.backgroundColor = data.color;
+                    if(genKey === 'millennial') btn.style.color = '#1a1a1a';
+                } else {
+                    btn.className = "px-6 py-3 rounded-full font-bold text-sm sm:text-base transition-all bg-white text-slate-600 border-2 border-slate-200 hover:bg-slate-100";
+                    btn.style.backgroundColor = '';
+                    btn.style.color = '';
+                }
+            });
+        };
+
+        const ctxProviders = document.getElementById('providersChart').getContext('2d');
+        const rawProvidersLabels = ['Bradesco Saúde (Upgrades)', 'New Value (Saldos)', 'Vida Link', 'Seguro de Vida Adicional'];
+        
+        new Chart(ctxProviders, {
+            type: 'bar',
+            data: {
+                labels: rawProvidersLabels.map(wrapLabel),
+                datasets: [{
+                    label: 'Alocação Estimada de Pontos Flexíveis',
+                    data: [850, 620, 310, 250],
+                    backgroundColor: ['#EA1D2C', '#FFC107', '#1a1a1a', '#94a3b8'],
+                    borderRadius: 8
+                }]
+            },
+            options: {
+                indexAxis: 'y',
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false },
+                    ...globalTooltipConfig
+                },
+                scales: {
+                    x: { grid: { display: false, drawBorder: false }, ticks: { display: false } },
+                    y: { grid: { display: false, drawBorder: false }, ticks: { font: { weight: 'bold', size: 13 }, color: '#1e293b' } }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
